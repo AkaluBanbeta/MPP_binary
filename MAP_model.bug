@@ -1,0 +1,23 @@
+############  Method 3. The MAP model ############################
+
+model { 
+    
+    for (i in 1:H) {
+    
+    success[i] ~ dbin(theta_c[i],n[i]) 
+    logit(theta_c[i]) <-  logit_theta[i]
+    logit_theta[i]   ~  dnorm(mu, inv_tau2)  
+    }        
+    inv_tau2 <- pow(tau, -2)
+    tau ~ dnorm(0, 1)I(0,) # HN(scale = 1 / sqrt(prior_prec_tau))
+    mu  ~ dnorm(0,1.0E-6)
+    
+    success[H+1] ~ dbin(theta_c[H+1],n[H+1])
+    logit(theta_c[H+1])  <-  logit_theta[H+1]
+    logit_theta[H+1]   ~  dnorm(mu, inv_tau2)
+    
+    success[H+2] ~ dbin(theta_t,n[H+2])
+    theta_t <-theta_c[H+1]+ delta    
+    delta ~ dnorm(0,1.0E-6)
+    
+    }
