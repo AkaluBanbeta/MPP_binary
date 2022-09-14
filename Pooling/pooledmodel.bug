@@ -1,0 +1,12 @@
+
+model {
+    
+    for (i in 1:(H+1)) {
+    success[i] ~ dbin(theta_c,n[i])               
+    } 
+    success[H+2] ~ dbin(theta_t,n[H+2])
+    theta_t <- theta_c+delta
+    theta_c ~ dunif(0,1)
+    delta ~ dnorm(0,1.0E-6)       
+    
+    }
