@@ -1,0 +1,26 @@
+#Bayesian Robust meta-analytic-predictive (MAP) analysis
+
+
+#Data generation
+source("../Data_preparation.R")
+MAP_data=Data_list
+
+
+#Model 
+source("../Robust_MAP_model.bug")
+
+
+inits_Robust_MAP =function() {list(delta = 0,tau = rexp(1, rate = 4),mu = rnorm(1, mean = -1, sd = 0.5),.RNG.name="base::Mersenne-Twister",.RNG.seed=80000)}
+Robust_MAP_parameters.to.save<- c("delta","tau","mu","theta_t")
+Robust_MAP_model<-jags.model(file="Robust_MAP_model.bug", data=Robust_MAP_data, inits=inits_Robust_MAP, n.chains=1, n.adapt=0.2*niter)
+update(Robust_MAP_model, n.iter=0.2*niter) # burn in
+result_Robust_MAP<-coda.samples(Robust_MAP_model, variable.names=Robust_MAP_parameters.to.save,thin = 5, n.iter=niter)
+varnames(result_Robust_MAP)[1]<-"delta"
+varnames(result_Robust_MAP)[2]<-"mu"
+varnames(result_Robust_MAP)[3]<-"tau"
+varnames(result_Robust_MAP)[4]<-"theta_t"
+summary(result_Robust_MAP)
+
+
+
+
