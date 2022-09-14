@@ -1,0 +1,32 @@
+
+#Robustification applied to individual power parameters (Robust DMPP 1) in MPP
+
+
+#Data generation
+source("../Data_preparation.R")
+
+
+#Load function for computing the Robust DMPP 1
+source("../LogL_RMPP_1.R") 
+
+
+#MCMC sampling 
+init_Robust=rep(0.3,H+4)
+result_MPP_Robust<-MCMCmetrop1R(LikelihoodMPP_Robust,theta.init=init_Robust,burnin =1*niter,mcmc =1*niter,verbose=0, thin = 1 ,V=0.0002*diag(length(init_Robust)),
+                                success=success,H=H,n=n)
+result_MPP_Robust<-MCMCmetrop1R(LikelihoodMPP_Robust,theta.init=result_MPP_Robust[nrow(result_MPP_Robust),],  burnin = 1*niter, mcmc =1*niter,verbose=0, thin = 1 ,V=0.3*cov(result_MPP_Robust[trunc(0.8*niter):trunc(1*niter),]),
+                                success=success,H=H,n=n)
+result_MPP_Robust<-MCMCmetrop1R(LikelihoodMPP_Robust,theta.init=result_MPP_Robust[nrow(result_MPP_Robust),],  burnin = 1*niter, mcmc =1*niter,verbose=0, thin = 1 ,V=0.25*cov(result_MPP_Robust[trunc(0.6*niter):trunc(0.8*niter),]),
+                                success=success,H=H,n=n)
+result_MPP_Robust<-MCMCmetrop1R(LikelihoodMPP_Robust,theta.init=result_MPP_Robust[nrow(result_MPP_Robust),],  burnin = 1*niter, mcmc =1*niter,verbose=0, thin = 5 ,V=0.15*cov(result_MPP_Robust[trunc(0.6*niter):trunc(0.8*niter),]),
+                                success=success,H=H,n=n)
+result_MPP_Robust<-as.mcmc(as.data.frame((result_MPP_Robust))) 
+varnames(result_MPP_Robust)[1]<-"p"
+for(i in 1:H){
+  varnames(result_MPP_Robust)[i+1]<-paste0("weight",i)
+}
+varnames(result_MPP_Robust)[H+2]<-"a"
+varnames(result_MPP_Robust)[H+3]<-"b"
+varnames(result_MPP_Robust)[H+4]<-"delta"
+summary(result_MPP_Robust)
+
