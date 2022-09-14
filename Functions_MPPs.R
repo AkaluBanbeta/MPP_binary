@@ -1,5 +1,5 @@
-#The following are functions for four versions of normalized 
-#modified power prior (MPP) methods for binomial model
+#Four functions for differet versions of the modified
+#or normalized power prior (MPP) methods for binomial model
 
 
 #1. MPP Ind: the MPP with Independent power parameters  #########
