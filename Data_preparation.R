@@ -80,5 +80,6 @@ success=dataset_long$success            # number of successes
 H=n_hist_trials                         # number of historical trials
 n=rep(n_patients,n_hist_trials+2)       # number of patients per trial 
 
+# This is the data we use in the analysis
 Data_list=list(success=success,H=H,n=n)  
 
