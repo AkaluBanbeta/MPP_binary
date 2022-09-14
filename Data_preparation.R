@@ -1,5 +1,6 @@
 # This code generates binary data set with multiple trials
 
+# Packages
 library(parallel)
 library(foreign)
 library(Rlab)
@@ -30,14 +31,12 @@ sim=1
 set.seed(sim+500)        #Use the same seed for each scenario
 
 #Simulate the data set
-
 trialnr<-rep(0,(H+2)*n_patients)
 response<- rep(0,(H+2)*n_patients)
 intervention<- rep(0,(H+2)*n_patients)
 
 
 #Historical trials
-
 for (i in 1:(H)){
   trial_effect<-rnorm(n=1,mean=0,sd=sqrt(var_study_effect)) + baseline_oddsratio
   trial_effect_indiv<- trial_effect
@@ -49,7 +48,6 @@ for (i in 1:(H)){
 
 
 #Current trial
-
 i<- H+1
 random_trial_effect_current_trial<-rnorm(n=1,mean=0,sd=sqrt(var_study_effect))
 for (j in 1:n_patients){
@@ -61,7 +59,6 @@ for (j in 1:n_patients){
 } 
 
 #Intervention group of current trial
-
 i<-H+2
 for (j in 1:n_patients){
   trial_effect<-random_trial_effect_current_trial+log((intervention_effect+pc)/(1-(intervention_effect+pc)))
