@@ -1,0 +1,23 @@
+
+#Bayesian meta-analytic-predictive (MAP) analysis
+
+
+#Data generation
+source("../Data_preparation.R")
+MAP_data=Data_list
+
+
+#Model 
+source("../MAP_model.bug")
+
+inits_MAP =function() {list(delta = 0,tau = rexp(1, rate = 4),mu = rnorm(1, mean = -1, sd = 0.5),.RNG.name="base::Mersenne-Twister",.RNG.seed=80000)}
+MAP_parameters.to.save<- c("delta","tau","mu","theta_t")
+MAP_model<-jags.model(file="MAP_model.bug", data=MAP_data, inits=inits_MAP, n.chains=1, n.adapt=0.2*niter)
+update(MAP_model, n.iter=0.2*niter) # burn in
+result_MAP<-coda.samples(MAP_model, variable.names=MAP_parameters.to.save,thin = 5, n.iter=niter)
+varnames(result_MAP)[1]<-"delta"
+varnames(result_MAP)[2]<-"mu"
+varnames(result_MAP)[3]<-"tau"
+varnames(result_MAP)[4]<-"theta_t"
+summary(result_MAP)
+
