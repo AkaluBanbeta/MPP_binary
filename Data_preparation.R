@@ -1,4 +1,6 @@
-# This code generates binary data set with multiple trials
+#This code generates binary data set for H number of historical control arms 
+#and for two arms of current trial
+
 
 #Packages
 library(parallel)
