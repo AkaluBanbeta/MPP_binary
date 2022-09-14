@@ -1,6 +1,6 @@
 # This code generates binary data set with multiple trials
 
-# Packages
+#Packages
 library(parallel)
 library(foreign)
 library(Rlab)
@@ -57,6 +57,7 @@ for (j in 1:n_patients){
   trial_effect_indiv<- trial_effect
   response[(i-1)*n_patients+j]<-rbern(n=1,1/(1+exp(-trial_effect_indiv)))
 } 
+
 
 #Intervention group of current trial
 i<-H+2
