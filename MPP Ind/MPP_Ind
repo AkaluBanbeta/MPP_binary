@@ -1,1 +1,31 @@
 
+  #Analysis based on the modified power prrior with independent powers (MPP Ind)
+
+
+  #Data generation
+  source("../Data_preparation.R")
+
+  
+  #Load function for computing the MPP
+  source("../LogL_MPP_Ind.R") 
+  
+  
+  #MCMC sampling 
+  init_Ind=rep(0.3,H+2)
+  result_MPP_Ind<-MCMCmetrop1R(LikelihoodMPP_Ind,theta.init=init_Ind,burnin =1*niter,mcmc =1*niter,verbose=0, thin = 1 ,V=0.0008*diag(length(init_Ind)),
+                               success=success,H=H,n=n)
+  result_MPP_Ind<-MCMCmetrop1R(LikelihoodMPP_Ind,theta.init=result_MPP_Ind[nrow(result_MPP_Ind),],  burnin = 1*niter, mcmc =0.8*niter,verbose=0, thin = 1 ,V=0.2*cov(result_MPP_Ind[trunc(0.8*niter):trunc(1*niter),]),
+                               success=success,H=H,n=n)
+  result_MPP_Ind<-MCMCmetrop1R(LikelihoodMPP_Ind,theta.init=result_MPP_Ind[nrow(result_MPP_Ind),],  burnin = 1*niter, mcmc =0.8*niter,verbose=0, thin = 1 ,V=0.4*cov(result_MPP_Ind[trunc(0.6*niter):trunc(0.8*niter),]),
+                               success=success,H=H,n=n)
+  result_MPP_Ind<-MCMCmetrop1R(LikelihoodMPP_Ind,theta.init=result_MPP_Ind[nrow(result_MPP_Ind),],  burnin = 1*niter, mcmc =1*niter,verbose=0, thin = 5 ,V=0.3*cov(result_MPP_Ind[trunc(0.6*niter):trunc(0.8*niter),]),
+                               success=success,H=H,n=n)
+  result_MPP_Ind<-as.mcmc(as.data.frame((result_MPP_Ind))) 
+  varnames(result_MPP_Ind)[1]<-"theta"
+  for(i in 1:H){
+    varnames(result_MPP_Ind)[i+1]<-paste0("weight",i)
+  }
+  varnames(result_MPP_Ind)[H+2]<-"delta"
+  summary(result_MPP_Ind)
+  
+  
