@@ -18,7 +18,7 @@ library("fdrtool")
 
 #Settings of simulation study
 n_patients<- 100         #Number of patients in simulated data set
-n_hist_trials <- 3       #Number of historical trials
+H<- 3                    #Number of historical trials
 var_study_effect <- 0    #Variance of between-trials in log-odds historical studies.
 pc <- 0.72
 baseline_oddsratio <- log(0.72/0.28)    #Log baseline odds 
@@ -31,14 +31,14 @@ set.seed(sim+500)        #Use the same seed for each scenario
 
 #Simulate the data set
 
-trialnr<-rep(0,(n_hist_trials+2)*n_patients)
-response<- rep(0,(n_hist_trials+2)*n_patients)
-intervention<- rep(0,(n_hist_trials+2)*n_patients)
+trialnr<-rep(0,(H+2)*n_patients)
+response<- rep(0,(H+2)*n_patients)
+intervention<- rep(0,(H+2)*n_patients)
 
 
 #Historical trials
 
-for (i in 1:(n_hist_trials)){
+for (i in 1:(H)){
   trial_effect<-rnorm(n=1,mean=0,sd=sqrt(var_study_effect)) + baseline_oddsratio
   trial_effect_indiv<- trial_effect
   for (j in 1:n_patients){    
@@ -50,23 +50,23 @@ for (i in 1:(n_hist_trials)){
 
 #Current trial
 
-i<- n_hist_trials+1
+i<- H+1
 random_trial_effect_current_trial<-rnorm(n=1,mean=0,sd=sqrt(var_study_effect))
 for (j in 1:n_patients){
   #Control group of current trial
   trial_effect<-random_trial_effect_current_trial+baseline_oddsratio
-  trialnr[(i-1)*n_patients+j]<-n_hist_trials+1
+  trialnr[(i-1)*n_patients+j]<-H+1
   trial_effect_indiv<- trial_effect
   response[(i-1)*n_patients+j]<-rbern(n=1,1/(1+exp(-trial_effect_indiv)))
 } 
 
 #Intervention group of current trial
 
-i<-n_hist_trials+2
+i<-H+2
 for (j in 1:n_patients){
   trial_effect<-random_trial_effect_current_trial+log((intervention_effect+pc)/(1-(intervention_effect+pc)))
   intervention[(i-1)*n_patients+j]<-1
-  trialnr[(i-1)*n_patients+j]<- n_hist_trials+1
+  trialnr[(i-1)*n_patients+j]<- H+1
   trial_effect_indiv<- trial_effect
   response[(i-1)*n_patients+j]<-rbern(n=1,1/(1+exp(-trial_effect_indiv)))
 } 
@@ -77,8 +77,7 @@ dataset_long<-ddply(dataset,.variables=.(TrialArray,InterventionArray),summarise
 dataset_long
 
 success=dataset_long$success            # number of successes
-H=n_hist_trials                         # number of historical trials
-n=rep(n_patients,n_hist_trials+2)       # number of patients per trial 
+n=rep(n_patients,H+2)       # number of patients per trial 
 
 # This is the data we use in the analysis
 Data_list=list(success=success,H=H,n=n)  
