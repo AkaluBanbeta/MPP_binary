@@ -1,0 +1,21 @@
+
+#Bayesian pooled analysis
+
+
+#Data generation
+source("../Data_preparation.R")
+data_pooled = Data_list
+
+
+#Model 
+source("../pooledmodel.bug")
+
+inits_pooled <- function() {list (theta_c=runif(1,0,0.5),delta=runif(1,0,0.49),.RNG.name="base::Mersenne-Twister",.RNG.seed=80000)}
+pooled_parameters.to.save<- c("delta","theta_c","theta_t")
+pooled_model<-jags.model(file="pooledmodel.bug", data=data_pooled, inits=inits_pooled, n.chains=1, n.adapt=0.2*niter)
+update(pooled_model, n.iter=0.2*niter) # burn in
+result_pooled<-coda.samples(pooled_model, variable.names=pooled_parameters.to.save,thin = 5, n.iter=niter)
+varnames(result_pooled)[1]<-"delta"
+varnames(result_pooled)[2]<-"theta_c"
+varnames(result_pooled)[3]<-"theta_t"
+summary(result_pooled)
