@@ -1,0 +1,12 @@
+
+model {
+    
+    success[H+1] ~ dbin(theta_c,n[H+1])
+    success[H+2] ~ dbin(theta_t,n[H+2])
+    
+    theta_t <- theta_c + delta    # theta_t is a parameter for treatment 
+    theta_c ~ dunif(0,1)          # theta_c for control
+    delta ~ dnorm(0,1.0E-6)     # delta for treatment effect
+    
+    }
+    
