@@ -2,7 +2,7 @@
 #or normalized power prior (MPP) methods for binomial model
 
 
-#1. MPP Ind: the MPP with Independent power parameters  #########
+#1. MPP Ind: the MPP with Independent power parameters 
 LikelihoodMPP_Ind <- function(parameters,success,H,n){
   theta=parameters[1]
   weight=parameters[2:(H+1)]    # weight is for the power (weight) parameter
