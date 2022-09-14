@@ -1,8 +1,9 @@
-### The four functions of the MPP methods
+#The following are functions for four versions of normalized 
+#modified power prior (MPP) methods for binomial model
 
-# 1. The MPP with Independent power parameters  #########
+
+#1. MPP Ind: the MPP with Independent power parameters  #########
 LikelihoodMPP_Ind <- function(parameters,success,H,n){
-  
   theta=parameters[1]
   weight=parameters[2:(H+1)]    # weight is for the power (weight) parameter
   delta=parameters[H+2]         # delta for treatment effect
@@ -25,9 +26,8 @@ LikelihoodMPP_Ind <- function(parameters,success,H,n){
 }
 
 
-# 2. The MPP with Dependent power parameters (DMPP)
-LikelihoodMPP_Dep <- function(parameters,success,H,n){
-  
+# 2. The DMPP: the MPP with dependent power parameters 
+LikelihoodMPP_Dep <- function(parameters,success,H,n){  
   theta=parameters[1]
   weight=parameters[2:(H+1)]
   a=parameters[H+2]
@@ -59,13 +59,11 @@ LikelihoodMPP_Dep <- function(parameters,success,H,n){
 
 # 3. The Robust DMPP 1: robustification applied to each individual power parameter
 LikelihoodMPP_Robust<-function(parameters,success,H,n){
-  
   theta=parameters[1]
   weight=parameters[2:(H+1)]
   a=parameters[H+2]
   b=parameters[H+3]
   delta=parameters[H+4]
-  
   theta2=theta+delta
   Prior0=0
   mu=a/(a+b)
@@ -80,27 +78,23 @@ LikelihoodMPP_Robust<-function(parameters,success,H,n){
     Prior0<-Prior0+log(dgamma(1/sigmasq,0.01,0.01)/(sigmasq^2))
     Prior0<-Prior0+sum(log(0.9*dbeta(weight,a,b )+0.1*dhalfnorm(weight,sd2theta(sqrt(sigmasq/6.25))))) 
     ScalingConstantTemp <- lgamma(sum(weight[1:H]*success[1:H])+1)+lgamma(sum(weight[1:H]*(n[1:H]-success[1:H]))+1)-lgamma(sum(weight[1:H]*n[1:H])+1+1) 
-    
   }else{
     Prior0 <- -10^200
     lik <- -10^200
     lik.1<- -10^200
     ScalingConstantTemp<- 0
   }
-  
   LikelihoodMPP_Robust<- lik+lik.1+Prior0-ScalingConstantTemp
 }
 
 
-#8. The Robust MPP robustification applied to the overall weights 
+#4. The Robust DMPP 2: robustification applied to the overall weights 
 LikelihoodMPP_Robust_2<-function(parameters,success,H,n){
-  
   theta=parameters[1]
   weight=parameters[2:(H+1)]
   a=parameters[H+2]
   b=parameters[H+3]
   delta=parameters[H+4]
-  
   theta2=theta+delta
   Prior0=0
   mu=a/(a+b)
@@ -115,14 +109,12 @@ LikelihoodMPP_Robust_2<-function(parameters,success,H,n){
     Prior0<-Prior0+log(dgamma(1/sigmasq,0.01,0.01)/(sigmasq^2))
     Prior0<-Prior0+log (0.9*prod(dbeta(weight,a,b))+0.1*prod(dhalfnorm(weight,sd2theta(sqrt(sigmasq/6.25)))))
     ScalingConstantTemp <- lgamma(sum(weight[1:H]*success[1:H])+1)+lgamma(sum(weight[1:H]*(n[1:H]-success[1:H]))+1)-lgamma(sum(weight[1:H]*n[1:H])+1+1) 
-    
   }else{
     Prior0 <- -10^200
     lik <- -10^200
     lik.1<- -10^200
     ScalingConstantTemp<- 0
-  }
-  
+  }  
   LikelihoodMPP_Robust_2<- lik+lik.1+Prior0-ScalingConstantTemp
 }
 
